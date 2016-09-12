@@ -14,7 +14,7 @@ function! foldtext#register_foldtext(method)
     let s:foldtextMethods[a:method] = 1
 endfunction
 
-function foldtext#GetFoldtextCommand(method)
+function! foldtext#GetFoldtextCommand(method)
     return printf("set foldtext=%s()", foldtext#GetFoldtextFunc(a:method))
 endfunction
 
@@ -38,5 +38,13 @@ function! foldtext#GetDescription(method)
 endfunction
 
 function! foldtext#ListMethods(...)
+    call foldtext#Reload()
     return keys(s:foldtextMethods)
+endfunction
+
+function! foldtext#Reload()
+    let s:foldtextFiles = globpath(&runtimepath, 'autoload/foldtext/*.vim', 0, 1)
+    for f in s:foldtextFiles
+        call foldtext#register_foldtext(fnamemodify(f, ":t:r"))
+    endfor
 endfunction
